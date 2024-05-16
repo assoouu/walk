@@ -151,7 +151,6 @@ class ChatHomePageState extends State<ChatHomePage> {
       payload: null,
     );
   }
-
   Future<void> _handleSignOut() async {
     await _authProvider.handleSignOut();
     await Navigator.of(context).pushAndRemoveUntil(

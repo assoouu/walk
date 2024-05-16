@@ -213,7 +213,7 @@ class ChatPageState extends State<ChatPage> {
                           },
                           errorBuilder: (_, __, ___) {
                             return Image.asset(
-                              'images/img_not_available.jpeg',
+                              'assets/chat/img_not_available.jpeg',
                               width: 200,
                               height: 200,
                               fit: BoxFit.cover,
@@ -239,7 +239,7 @@ class ChatPageState extends State<ChatPage> {
                   // Sticker
                   : Container(
                       child: Image.asset(
-                        'images/${messageChat.content}.gif',
+                        'assets/chat/${messageChat.content}.gif',
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,
@@ -326,7 +326,7 @@ class ChatPageState extends State<ChatPage> {
                                   );
                                 },
                                 errorBuilder: (_, __, ___) => Image.asset(
-                                  'images/img_not_available.jpeg',
+                                  'assets/chat/img_not_available.jpeg',
                                   width: 200,
                                   height: 200,
                                   fit: BoxFit.cover,
@@ -348,7 +348,7 @@ class ChatPageState extends State<ChatPage> {
                           )
                         : Container(
                             child: Image.asset(
-                              'images/${messageChat.content}.gif',
+                              'assets/chat/${messageChat.content}.gif',
                               width: 100,
                               height: 100,
                               fit: BoxFit.cover,
@@ -481,7 +481,7 @@ class ChatPageState extends State<ChatPage> {
     return TextButton(
       onPressed: () => _onSendMessage(stickerName, TypeMessage.sticker),
       child: Image.asset(
-        'images/$stickerName.gif',
+        'assets/chat/$stickerName.gif',
         width: 50,
         height: 50,
         fit: BoxFit.cover,

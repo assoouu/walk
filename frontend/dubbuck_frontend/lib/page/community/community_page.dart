@@ -13,7 +13,7 @@ class _CommunityPageState extends State<CommunityPage> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: 0); // "사진" 탭이 기본 탭으로 설정됩니다.
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 0); // "사진" 탭이 기본 탭으로 설정됩니다.
   }
 
   @override

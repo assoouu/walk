@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dubbuck_front/model/airQuality_data.dart';
 import 'package:dubbuck_front/model/weather_data.dart';
 import 'package:dubbuck_front/page/main/settings_page.dart';
@@ -9,10 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:skeletons/skeletons.dart';
 
 import '../../constant/color_constants.dart';
 import '../../model/menu_setting.dart';
+import '../../model/user_information.dart';
+import '../../providers/auth_provider.dart';
+import '../login/login_screen.dart';
 import 'airQuality_info.dart';
 import 'custom_bottom_nav_bar.dart';
 import 'daily_info_tiles.dart';
@@ -27,6 +32,9 @@ class _MainPageState extends State<MainPage> {
   Future<WeatherData>? futureWeatherData;
   Future<AirQualityData>? futureAirQualityData;
 
+  UserInformation? _userInfo;
+  late final _authProvider = context.read<AuthProvider>();
+
   final _menus = <MenuSetting>[
     MenuSetting(title: 'Settings', icon: Icons.settings),
     MenuSetting(title: 'Log out', icon: Icons.exit_to_app),
@@ -36,6 +44,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _fetchLocationAndData();
+    _fetchUserInfo();
   }
 
   void _fetchLocationAndData() async {
@@ -46,6 +55,22 @@ class _MainPageState extends State<MainPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(e.toString()),
+      ));
+    }
+  }
+
+  Future<void> _fetchUserInfo() async {
+    try {
+      DocumentSnapshot userInfoSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_authProvider.userFirebaseId)
+          .get();
+      setState(() {
+        _userInfo = UserInformation.fromDocument(userInfoSnapshot);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('사용자 정보를 가져오는 데 실패했습니다: $e'),
       ));
     }
   }
@@ -152,7 +177,11 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _handleSignOut() async {
-    // Handle sign-out logic here
+    await _authProvider.handleSignOut();
+    await Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => LoginPage()),
+          (_) => false,
+    );
   }
 
   Widget _buildPopupMenu() {
@@ -196,6 +225,35 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            if (_userInfo != null)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: _userInfo!.photoUrl.isNotEmpty
+                          ? NetworkImage(_userInfo!.photoUrl)
+                          : null,
+                      child: _userInfo!.photoUrl.isNotEmpty
+                          ? null
+                          : Icon(
+                        Icons.account_circle,
+                        size: 50,
+                        color: ColorConstants.greyColor,
+                      ),
+                      backgroundColor: ColorConstants.greyColor,
+                      radius: 20,
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      _userInfo!.nickname,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              )
+            else
+              SizedBox(),
             FutureBuilder<WeatherData>(
               future: futureWeatherData,
               builder: (context, snapshot) {

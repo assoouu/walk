@@ -18,7 +18,6 @@ class SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 3), () {
-      // just delay for showing this slash page clearer because it's too fast
       _checkSignedIn();
     });
   }

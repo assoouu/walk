@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 import 'custom_cached_network_image.dart';
-import 'like_button_model.dart';
+import '../../../model/like_button_picture.dart';
 
 class ImageDetailPage extends StatefulWidget {
   final List<String> imageUrls;
