@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/color_constants.dart';
@@ -159,7 +160,7 @@ class ChatPageState extends State<ChatPage> {
         _listScrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
       }
     } else {
-      Fluttertoast.showToast(msg: 'Nothing to send', backgroundColor: ColorConstants.greyColor);
+      Fluttertoast.showToast(msg: '${'nothing-to-send'}.i18n()', backgroundColor: ColorConstants.greyColor);
     }
   }
 
@@ -531,7 +532,7 @@ class ChatPageState extends State<ChatPage> {
                 style: TextStyle(color: ColorConstants.primaryColor, fontSize: 15),
                 controller: _chatInputController,
                 decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
+                  hintText: 'type-your-message'.i18n(),
                   hintStyle: TextStyle(color: ColorConstants.greyColor),
                 ),
                 focusNode: _focusNode,
@@ -577,7 +578,7 @@ class ChatPageState extends State<ChatPage> {
                       controller: _listScrollController,
                     );
                   } else {
-                    return Center(child: Text("No message here yet..."));
+                    return Center(child: Text("no-message-here-yet".i18n()));
                   }
                 } else {
                   return Center(

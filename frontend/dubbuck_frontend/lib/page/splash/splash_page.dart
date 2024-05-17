@@ -46,7 +46,7 @@ class SplashPageState extends State<SplashPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
-              "assets/splash/브로콜리뚜벅.gif",
+              "assets/splash/broccoli.gif",
               width: 200,
               height: 200,
             ),

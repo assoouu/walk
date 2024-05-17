@@ -44,7 +44,7 @@ class _PhotoPageState extends State<PhotoPage> {
                     ));
                   },
                   child: Hero(
-                    tag: 'photo$index',
+                    tag: '${'photo'}.i18n()$index',
                     child: CustomCachedNetworkImage(imageUrl: snapshot.data!), // 로컬 파일 경로를 사용
                   ),
                 );

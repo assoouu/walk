@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'calendar_page.dart';
 import 'log_page.dart';
 
@@ -26,13 +27,13 @@ class _DiraryHomePageState extends State<DiraryHomePage> with SingleTickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('뚜벅기록'),
+        title: Text('record'.i18n()),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: '일지'),
-            Tab(text: '캘린더'),
+            Tab(text: 'diary'.i18n()),
+            Tab(text: 'calendar'.i18n()),
           ],
         ),
       ),

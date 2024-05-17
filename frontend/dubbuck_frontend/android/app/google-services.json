@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "113515951255-5421cetg5gcibv27i77vldum64ucqqio.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dubbuck_front",
+            "certificate_hash": "72015285e3afdb02899c2ad4d8cbd7d7a2cbc28c"
+          }
+        },
+        {
           "client_id": "113515951255-5tq5dnpclcbqpd0f4vrh383ed0ilu4kn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

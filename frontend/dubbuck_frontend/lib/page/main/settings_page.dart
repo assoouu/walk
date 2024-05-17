@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constant/app_constants.dart';
@@ -223,7 +224,7 @@ class SettingsPageState extends State<SettingsPage> {
                     // Username
                     Container(
                       child: Text(
-                        'Nickname',
+                        'nickname'.i18n(),
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.bold,
@@ -237,7 +238,7 @@ class SettingsPageState extends State<SettingsPage> {
                         data: Theme.of(context).copyWith(primaryColor: ColorConstants.primaryColor),
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: 'Sweetie',
+                            hintText: 'sweetie'.i18n(),
                             contentPadding: EdgeInsets.all(5),
                             hintStyle: TextStyle(color: ColorConstants.greyColor),
                           ),
@@ -254,7 +255,7 @@ class SettingsPageState extends State<SettingsPage> {
                     // About me
                     Container(
                       child: Text(
-                        'About me',
+                        'about-me'.i18n(),
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.bold,
@@ -268,7 +269,7 @@ class SettingsPageState extends State<SettingsPage> {
                         data: Theme.of(context).copyWith(primaryColor: ColorConstants.primaryColor),
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: 'Fun, like travel and play PES...',
+                            hintText: 'fun-like-travel-play-game'.i18n(),
                             contentPadding: EdgeInsets.all(5),
                             hintStyle: TextStyle(color: ColorConstants.greyColor),
                           ),
@@ -290,7 +291,7 @@ class SettingsPageState extends State<SettingsPage> {
                   child: TextButton(
                     onPressed: _handleUpdateData,
                     child: Text(
-                      'Update',
+                      'update'.i18n(),
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                     style: ButtonStyle(

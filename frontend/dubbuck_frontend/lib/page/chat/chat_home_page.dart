@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/app_constants.dart';
@@ -48,8 +49,8 @@ class ChatHomePageState extends State<ChatHomePage> {
   final _searchBarController = TextEditingController();
 
   final _menus = <MenuSetting>[
-    MenuSetting(title: 'Settings', icon: Icons.settings),
-    MenuSetting(title: 'Log out', icon: Icons.exit_to_app),
+    MenuSetting(title: 'settings'.i18n(), icon: Icons.settings),
+    MenuSetting(title: 'log-out'.i18n(), icon: Icons.exit_to_app),
   ];
 
   @override
@@ -119,7 +120,7 @@ class ChatHomePageState extends State<ChatHomePage> {
   }
 
   void _onItemMenuPress(MenuSetting choice) {
-    if (choice.title == 'Log out') {
+    if (choice.title == 'log-out'.i18n()) {
       _handleSignOut();
     } else {
       Navigator.push(context, MaterialPageRoute(builder: (_) => SettingsPage()));
@@ -194,7 +195,7 @@ class ChatHomePageState extends State<ChatHomePage> {
                           );
                         } else {
                           return Center(
-                            child: Text("No users"),
+                            child: Text("no-users".i18n()),
                           );
                         }
                       } else {
@@ -248,7 +249,7 @@ class ChatHomePageState extends State<ChatHomePage> {
                 );
               },
               decoration: InputDecoration.collapsed(
-                hintText: 'Search by nickname (type exactly case sensitive)',
+                hintText: 'search-by-nickname'.i18n(),
                 hintStyle: TextStyle(fontSize: 13, color: ColorConstants.greyColor),
               ),
               style: TextStyle(fontSize: 13),
@@ -362,7 +363,7 @@ class ChatHomePageState extends State<ChatHomePage> {
                       children: [
                         Container(
                           child: Text(
-                            'Nickname: ${userChat.nickname}',
+                            '${'nickname'.i18n()}: ${userChat.nickname}',
                             maxLines: 1,
                             style: TextStyle(color: ColorConstants.primaryColor),
                           ),
@@ -371,7 +372,7 @@ class ChatHomePageState extends State<ChatHomePage> {
                         ),
                         Container(
                           child: Text(
-                            'About me: ${userChat.aboutMe}',
+                            '${'about-me'.i18n()}: ${userChat.aboutMe}',
                             maxLines: 1,
                             style: TextStyle(color: ColorConstants.primaryColor),
                           ),

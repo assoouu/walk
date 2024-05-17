@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletons/skeletons.dart';
 
@@ -36,8 +37,8 @@ class _MainPageState extends State<MainPage> {
   late final _authProvider = context.read<AuthProvider>();
 
   final _menus = <MenuSetting>[
-    MenuSetting(title: 'Settings', icon: Icons.settings),
-    MenuSetting(title: 'Log out', icon: Icons.exit_to_app),
+    MenuSetting(title: 'settings'.i18n(), icon: Icons.settings),
+    MenuSetting(title: 'log-out'.i18n(), icon: Icons.exit_to_app),
   ];
 
   @override
@@ -70,7 +71,7 @@ class _MainPageState extends State<MainPage> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('사용자 정보를 가져오는 데 실패했습니다: $e'),
+        content: Text('${'failed-to-fetch-user-information'.i18n()}: $e'),
       ));
     }
   }
@@ -79,19 +80,19 @@ class _MainPageState extends State<MainPage> {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       await Geolocator.openLocationSettings();
-      throw Exception('위치 서비스가 비활성화되어 있습니다.');
+      throw Exception('${'location-service-disabled'.i18n()}.');
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        throw Exception('위치 권한이 거부되었습니다.');
+        throw Exception('${'location-permission-denied'.i18n()}.');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      throw Exception('위치 정보 접근 권한이 영구적으로 거부되었습니다.');
+      throw Exception('${'location-permission-denied-forever'.i18n()}.');
     }
 
     return await Geolocator.getCurrentPosition();
@@ -109,11 +110,11 @@ class _MainPageState extends State<MainPage> {
           futureWeatherData = Future.value(weatherData);
         });
       } else {
-        throw Exception('날씨 데이터를 불러오는 데 실패했습니다.');
+        throw Exception('${'failed-to-fetch-weather-data'.i18n()}.');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('날씨 데이터를 가져오는 데 실패했습니다: $e'),
+        content: Text('${'failed-to-fetch-weather-data'.i18n()}: $e'),
       ));
     }
   }
@@ -130,11 +131,11 @@ class _MainPageState extends State<MainPage> {
           futureAirQualityData = Future.value(airQualityData);
         });
       } else {
-        throw Exception('대기질 데이터를 불러오는 데 실패했습니다.');
+        throw Exception('${'failed-to-fetch-air-quality-data'.i18n()}.');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('대기질 데이터를 가져오는 데 실패했습니다: $e'),
+        content: Text('${'failed-to-fetch-air-quality-data'.i18n()}: $e'),
       ));
     }
   }

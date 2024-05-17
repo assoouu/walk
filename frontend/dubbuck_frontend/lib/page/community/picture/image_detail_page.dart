@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 import 'custom_cached_network_image.dart';
 import '../../../model/like_button_picture.dart';
@@ -25,7 +26,7 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
       create: (_) => LikeButtonModel(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('사진'),
+          title: Text('photos'.i18n()),
           centerTitle: true, // 제목을 AppBar의 중앙에 배치합니다.
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -51,7 +52,7 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
                 width: imageWidth,
                 height: imageHeight,
                 child: Hero(
-                  tag: 'photo$index',
+                  tag: '${'photo'}.i18n()$index',
                   child: CustomCachedNetworkImage(imageUrl: widget.imageUrls[index]),
                 ),
               );

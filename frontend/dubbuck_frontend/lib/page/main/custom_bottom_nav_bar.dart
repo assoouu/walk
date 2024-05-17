@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 
 import '../community/community_page.dart';
 import '../chat/chat_home_page.dart';
@@ -53,11 +54,11 @@ class CustomBottomNavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _navBarItem(Icons.directions_run, '뚜벅뚜벅', 0, context),
-          _navBarItem(Icons.hiking, '성큼성큼', 1, context),
-          _navBarItem(Icons.photo_library, '기록', 2, context),
-          _navBarItem(Icons.chat, '채팅', 3, context),
-          _navBarItem(Icons.group, '커뮤니티', 4, context),
+          _navBarItem(Icons.directions_run, 'stroll'.i18n(), 0, context),
+          _navBarItem(Icons.hiking, 'stride'.i18n(), 1, context),
+          _navBarItem(Icons.photo_library, 'record'.i18n(), 2, context),
+          _navBarItem(Icons.chat, 'chat'.i18n(), 3, context),
+          _navBarItem(Icons.group, 'community'.i18n(), 4, context),
         ],
       ),
     );

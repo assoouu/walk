@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'picture/photo_page.dart';
 import 'ranking/ranking_page.dart';
 
@@ -26,13 +27,13 @@ class _CommunityPageState extends State<CommunityPage> with SingleTickerProvider
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('커뮤니티'),
+        title: Text('community'.i18n()),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: '사진'),
-            Tab(text: '랭킹'),
+            Tab(text: 'photos'.i18n()),
+            Tab(text: 'ranking'.i18n()),
           ],
         ),
       ),

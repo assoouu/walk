@@ -1,6 +1,7 @@
 import 'package:dubbuck_front/model/weather_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 
 class WeatherInfo extends StatelessWidget {
   final WeatherData weatherData;
@@ -23,18 +24,18 @@ class WeatherInfo extends StatelessWidget {
           ),
           Row(
             children: [
-              Text('체감온도 ${weatherData.feelsLike}°C', style: TextStyle(color: Colors.deepOrangeAccent)),
+              Text('${'feels-like'.i18n()} ${weatherData.feelsLike}°C', style: TextStyle(color: Colors.deepOrangeAccent)),
               SizedBox(width: 8),
-              Image.asset('assets/weather/풍속.png', width: 24),
+              Image.asset('assets/weather/wind_speed.png', width: 24),
               SizedBox(width: 8),
-              Text('풍속 ${weatherData.windSpeed}m/s', style: TextStyle(color: Colors.blueGrey)),
+              Text('${'wind-speed'.i18n()} ${weatherData.windSpeed}m/s', style: TextStyle(color: Colors.blueGrey)),
             ],
           ),
           Row(
             children: [
-              Image.asset('assets/weather/습도.png', width: 24),
+              Image.asset('assets/weather/huminity.png', width: 24),
               SizedBox(width: 8),
-              Text('습도 ${weatherData.humidity}%', style: TextStyle(color: Colors.blueAccent)),
+              Text('${'humidity'.i18n()}  ${weatherData.humidity}%', style: TextStyle(color: Colors.blueAccent)),
               SizedBox(width: 8),
             ],
           ),

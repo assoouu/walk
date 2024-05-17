@@ -9,17 +9,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constant/app_constants.dart';
 import 'constant/color_constants.dart';
+import 'constant/localizationConfig_constants.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
-  initializeDateFormatting('ko_KR', null);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,7 +39,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    LocalJsonLocalization.delegate.directories = ['lib/i18n'];
+
     return MultiProvider(
+
       providers: [
         ChangeNotifierProvider<AuthProvider>(
           create: (_) => AuthProvider(
@@ -68,6 +74,34 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        localizationsDelegates: [
+          // delegate from flutter_localization
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+
+          // delegate from localization package.
+          //json-file
+          LocalJsonLocalization.delegate,
+          //or map
+          MapLocalization.delegate,
+        ],
+
+        localeResolutionCallback: (locale, supportedLocales) {
+          if (supportedLocales.contains(locale)) {
+            return locale;
+          }
+
+          Locale? mappedLocale = LocalizationConfig.localeMapping[locale?.languageCode ?? ''];
+          if (mappedLocale != null) {
+            initializeDateFormatting(mappedLocale.toLanguageTag(), null);
+            return mappedLocale;
+          }
+
+          initializeDateFormatting('en_US', null);
+          return Locale('en', 'US');
+        },
+
         title: AppConstants.appTitle,
         theme: ThemeData(
           useMaterial3: true,

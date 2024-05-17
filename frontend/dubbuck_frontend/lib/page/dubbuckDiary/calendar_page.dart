@@ -32,6 +32,10 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    final firstDay = DateTime.utc(2020, 10, 16);
+    final lastDay = DateTime.utc(2030, 3, 14);
+
     return Scaffold(
       appBar: AppBar(
         leading: Container(), // 뒤로가기 버튼을 없앱니다.
@@ -40,9 +44,9 @@ class _CalendarPageState extends State<CalendarPage> {
       body: Column(
         children: [
           TableCalendar(
-            locale: 'ko_KR',
-            firstDay: DateTime.utc(2020, 10, 16),
-            lastDay: DateTime.utc(2030, 3, 14),
+            locale: locale.toString(),
+            firstDay: firstDay,
+            lastDay: lastDay,
             focusedDay: _focusedDay,
             selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
             onDaySelected: (selectedDay, focusedDay) {

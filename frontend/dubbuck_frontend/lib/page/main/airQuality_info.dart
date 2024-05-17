@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dubbuck_front/model/airQuality_data.dart';
+import 'package:localization/localization.dart';
 
 class AirQualityInfo extends StatelessWidget {
   final AirQualityData airQualityData;
@@ -21,33 +22,33 @@ class AirQualityInfo extends StatelessWidget {
 
     switch (condition) {
       case 1:
-        imagePath = 'assets/weather/매우좋음.png';
-        text = '매우 좋음';
+        imagePath = 'assets/weather/very_good.png';
+        text = 'very-good'.i18n();
         textColor = Colors.indigo;
         break;
       case 2:
-        imagePath = 'assets/weather/좋음.png';
-        text = '좋음';
+        imagePath = 'assets/weather/good.png';
+        text = 'good'.i18n();
         textColor = Colors.indigo;
         break;
       case 3:
-        imagePath = 'assets/weather/보통.png';
-        text = '보통';
+        imagePath = 'assets/weather/moderate.png';
+        text = 'moderate'.i18n();
         textColor = Colors.black87;
         break;
       case 4:
-        imagePath = 'assets/weather/나쁨.png';
-        text = '나쁨';
+        imagePath = 'assets/weather/bad.png';
+        text = 'bad'.i18n();
         textColor = Colors.black87;
         break;
       case 5:
-        imagePath = 'assets/weather/매우나쁨.png';
-        text = '매우 나쁨';
+        imagePath = 'assets/weather/very_bad.png';
+        text = 'very-bad'.i18n();
         textColor = Colors.black87;
         break;
       default:
-        imagePath = 'assets/weather/보통.png';
-        text = '정보 없음';
+        imagePath = 'assets/weather/moderate.png';
+        text = 'no-information'.i18n();
         textColor = Colors.grey;
         break;
     }
@@ -55,7 +56,7 @@ class AirQualityInfo extends StatelessWidget {
     return Row(
       children: [
         Text(
-          '미세먼지',
+          'fine-dust'.i18n(),
             style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold)
         ),
         const SizedBox(width: 8),
