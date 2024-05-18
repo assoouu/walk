@@ -8,6 +8,15 @@ class WeatherInfo extends StatelessWidget {
 
   const WeatherInfo({Key? key, required this.weatherData}) : super(key: key);
 
+  String _getHumidityImage(int humidity) {
+    if (humidity >= 70) {
+      return 'assets/weather/humidity_high.png';
+    } else if (humidity >= 30) {
+      return 'assets/weather/humidity_mid.png';
+    } else {
+      return 'assets/weather/humidity_low.png';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +26,7 @@ class WeatherInfo extends StatelessWidget {
         children: [
           Row(
             children: [
-              Image.network(weatherData.getIconUrl(), width: 48), // 날씨 아이콘 이미지
+              Image.network(weatherData.getIconUrl(), width: 48),
               SizedBox(width: 8),
               Text('${weatherData.temperature}°C', style: Theme.of(context).textTheme.headlineMedium),
             ],
@@ -26,14 +35,17 @@ class WeatherInfo extends StatelessWidget {
             children: [
               Text('${'feels-like'.i18n()} ${weatherData.feelsLike}°C', style: TextStyle(color: Colors.deepOrangeAccent)),
               SizedBox(width: 8),
-              Image.asset('assets/weather/wind_speed.png', width: 24),
+              Icon(Icons.wind_power_outlined, color: Colors.blueGrey, size: 24),
               SizedBox(width: 8),
               Text('${'wind-speed'.i18n()} ${weatherData.windSpeed}m/s', style: TextStyle(color: Colors.blueGrey)),
             ],
           ),
           Row(
             children: [
-              Image.asset('assets/weather/huminity.png', width: 24),
+              Image.asset(
+                _getHumidityImage(weatherData.humidity), // 습도에 따라 이미지 파일 가져오기
+                width: 24,
+              ),
               SizedBox(width: 8),
               Text('${'humidity'.i18n()}  ${weatherData.humidity}%', style: TextStyle(color: Colors.blueAccent)),
               SizedBox(width: 8),

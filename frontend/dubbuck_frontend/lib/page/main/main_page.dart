@@ -4,8 +4,9 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dubbuck_front/model/airQuality_data.dart';
 import 'package:dubbuck_front/model/weather_data.dart';
-import 'package:dubbuck_front/page/main/settings_page.dart';
+import 'package:dubbuck_front/page/settings_page.dart';
 import 'package:dubbuck_front/page/main/weather_info.dart';
+import 'package:dubbuck_front/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
@@ -39,6 +40,7 @@ class _MainPageState extends State<MainPage> {
   final _menus = <MenuSetting>[
     MenuSetting(title: 'settings'.i18n(), icon: Icons.settings),
     MenuSetting(title: 'log-out'.i18n(), icon: Icons.exit_to_app),
+    MenuSetting(title: 'dark-theme'.i18n(), icon: Icons.dark_mode),
   ];
 
   @override
@@ -170,10 +172,12 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _onItemMenuPress(MenuSetting choice) {
-    if (choice.title == 'Log out') {
+    if (choice.title == 'log-out'.i18n()) {
       _handleSignOut();
+    } else if (choice.title == 'settings'.i18n()){
+      Navigator.push( context, MaterialPageRoute(builder: (_) => SettingsPage()));
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => SettingsPage()));
+      context.read<UiProvider>().changeTheme();
     }
   }
 

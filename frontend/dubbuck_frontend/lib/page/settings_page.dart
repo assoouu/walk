@@ -9,12 +9,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
-import '../../../constant/app_constants.dart';
-import '../../../constant/color_constants.dart';
-import '../../../constant/firestore_constants.dart';
-import '../../../model/user_information.dart';
-import '../../../providers/setting_provider.dart';
-import '../../../widgets/loading_view.dart';
+import '../../constant/app_constants.dart';
+import '../../constant/color_constants.dart';
+import '../../constant/firestore_constants.dart';
+import '../../model/user_information.dart';
+import '../../providers/setting_provider.dart';
+import '../../widgets/loading_view.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

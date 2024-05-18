@@ -16,11 +16,12 @@ import '../../model/menu_setting.dart';
 import '../../model/user_information.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/home_provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../utils/debouncer.dart';
 import '../../utils/utilities.dart';
 import '../../widgets/loading_view.dart';
 import '../login/login_screen.dart';
-import '../main/settings_page.dart';
+import '../settings_page.dart';
 import 'chat_page.dart';
 
 class ChatHomePage extends StatefulWidget {
@@ -51,6 +52,7 @@ class ChatHomePageState extends State<ChatHomePage> {
   final _menus = <MenuSetting>[
     MenuSetting(title: 'settings'.i18n(), icon: Icons.settings),
     MenuSetting(title: 'log-out'.i18n(), icon: Icons.exit_to_app),
+    MenuSetting(title: 'dark-theme'.i18n(), icon: Icons.dark_mode),
   ];
 
   @override
@@ -122,8 +124,10 @@ class ChatHomePageState extends State<ChatHomePage> {
   void _onItemMenuPress(MenuSetting choice) {
     if (choice.title == 'log-out'.i18n()) {
       _handleSignOut();
+    } else if (choice.title == 'settings'.i18n()){
+      Navigator.push( context, MaterialPageRoute(builder: (_) => SettingsPage()));
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => SettingsPage()));
+      context.read<UiProvider>().changeTheme();
     }
   }
 
