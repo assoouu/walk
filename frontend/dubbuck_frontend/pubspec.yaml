@@ -36,11 +36,13 @@ dependencies:
   google_fonts: ^6.2.1
   google_maps_flutter: ^2.6.1
   flutter_naver_login: ^1.8.0
-
   flutter_localizations:
     sdk: flutter
   localization: ^2.1.1
   firebase_app_check: ^0.2.2+5
+  url_launcher: ^6.2.6
+  uni_links2: ^0.6.0+2
+  kakao_flutter_sdk_user: ^1.9.1+2
 
 dev_dependencies:
   flutter_test:

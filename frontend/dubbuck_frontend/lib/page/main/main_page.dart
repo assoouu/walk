@@ -18,8 +18,10 @@ import 'package:skeletons/skeletons.dart';
 import '../../constant/color_constants.dart';
 import '../../model/menu_setting.dart';
 import '../../model/user_information.dart';
-import '../../providers/auth_provider.dart';
-import '../login/login_screen.dart';
+import '../../providers/google_auth_provider.dart';
+import '../../providers/kakao_auth_provider.dart';
+import '../../providers/naver_auth_provider.dart';
+import '../login/login_page.dart';
 import 'airQuality_info.dart';
 import 'custom_bottom_nav_bar.dart';
 import 'daily_info_tiles.dart';
@@ -35,7 +37,10 @@ class _MainPageState extends State<MainPage> {
   Future<AirQualityData>? futureAirQualityData;
 
   UserInformation? _userInfo;
-  late final _authProvider = context.read<AuthProvider>();
+  late final _googleAuthProvider = context.read<AuthProviderGoogle>();
+  late final _naverAuthProvider = Provider.of<AuthProviderNaver>( context, listen: false);
+  late final _kakaoAuthProvider = context.read<AuthProviderKakao>();
+
 
   final _menus = <MenuSetting>[
     MenuSetting(title: 'settings'.i18n(), icon: Icons.settings),
@@ -50,27 +55,26 @@ class _MainPageState extends State<MainPage> {
     _fetchUserInfo();
   }
 
-  void _fetchLocationAndData() async {
-    try {
-      Position position = await _getCurrentLocation();
-      fetchWeatherData(position);
-      fetchAirQualityData(position);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(e.toString()),
-      ));
-    }
+  Future<void> _fetchUserInfoById(String userId) async {
+    DocumentSnapshot userInfoSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get();
+    setState(() {
+      _userInfo = UserInformation.fromDocument(userInfoSnapshot);
+    });
   }
+
 
   Future<void> _fetchUserInfo() async {
     try {
-      DocumentSnapshot userInfoSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(_authProvider.userFirebaseId)
-          .get();
-      setState(() {
-        _userInfo = UserInformation.fromDocument(userInfoSnapshot);
-      });
+      if (_googleAuthProvider.status == GoogleStatus.authenticated) {
+        await _fetchUserInfoById(_googleAuthProvider.userFirebaseId ?? '');
+      } else if (_naverAuthProvider.status == NaverStatus.authenticated) {
+        await _fetchUserInfoById(_naverAuthProvider.userFirebaseId ?? '');
+      } else if (_kakaoAuthProvider.status == KakaoStatus.authenticated) {
+        await _fetchUserInfoById(_kakaoAuthProvider.userFirebaseId ?? '');
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('${'failed-to-fetch-user-information'.i18n()}: $e'),
@@ -100,14 +104,29 @@ class _MainPageState extends State<MainPage> {
     return await Geolocator.getCurrentPosition();
   }
 
-  void fetchWeatherData(Position position) async {
+  void _fetchLocationAndData() async {
+    try {
+      Position position = await _getCurrentLocation();
+      _fetchWeatherData(position);
+      _fetchAirQualityData(position);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
+    }
+  }
+
+  void _fetchWeatherData(Position position) async {
     try {
       var apiKey = dotenv.env['weatherKey'];
       var url =
-          'https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&lang=kr&units=metric&appid=$apiKey';
+          'https://api.openweathermap.org/data/2.5/weather?lat=${position
+          .latitude}&lon=${position
+          .longitude}&lang=kr&units=metric&appid=$apiKey';
       var response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
-        WeatherData weatherData = WeatherData.fromJson(json.decode(response.body));
+        WeatherData weatherData = WeatherData.fromJson(
+            json.decode(response.body));
         setState(() {
           futureWeatherData = Future.value(weatherData);
         });
@@ -121,14 +140,16 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  void fetchAirQualityData(Position position) async {
+  void _fetchAirQualityData(Position position) async {
     try {
       var apiKey = dotenv.env['weatherKey'];
       var airQualityUrl =
-          'http://api.openweathermap.org/data/2.5/air_pollution?lat=${position.latitude}&lon=${position.longitude}&appid=$apiKey';
+          'http://api.openweathermap.org/data/2.5/air_pollution?lat=${position
+          .latitude}&lon=${position.longitude}&appid=$apiKey';
       var response = await http.get(Uri.parse(airQualityUrl));
       if (response.statusCode == 200) {
-        AirQualityData airQualityData = AirQualityData.fromJson(json.decode(response.body));
+        AirQualityData airQualityData = AirQualityData.fromJson(
+            json.decode(response.body));
         setState(() {
           futureAirQualityData = Future.value(airQualityData);
         });
@@ -145,23 +166,27 @@ class _MainPageState extends State<MainPage> {
   Widget _buildSkeletonUI() {
     return SkeletonListView(
       itemCount: 3,
-      itemBuilder: (context, index) => Padding(
-        padding: EdgeInsets.all(8.0),
-        child: SkeletonItem(
-          child: Row(
-            children: <Widget>[
-              SkeletonAvatar(style: SkeletonAvatarStyle(width: 60, height: 60)),
-              SizedBox(width: 10),
-              Expanded(
-                child: SkeletonParagraph(
-                  style: SkeletonParagraphStyle(
-                      lines: 3, spacing: 6, lineStyle: SkeletonLineStyle(randomLength: true)),
-                ),
+      itemBuilder: (context, index) =>
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: SkeletonItem(
+              child: Row(
+                children: <Widget>[
+                  SkeletonAvatar(
+                      style: SkeletonAvatarStyle(width: 60, height: 60)),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: SkeletonParagraph(
+                      style: SkeletonParagraphStyle(
+                          lines: 3,
+                          spacing: 6,
+                          lineStyle: SkeletonLineStyle(randomLength: true)),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -173,49 +198,42 @@ class _MainPageState extends State<MainPage> {
 
   void _onItemMenuPress(MenuSetting choice) {
     if (choice.title == 'log-out'.i18n()) {
-      _handleSignOut();
-    } else if (choice.title == 'settings'.i18n()){
-      Navigator.push( context, MaterialPageRoute(builder: (_) => SettingsPage()));
+      if (_googleAuthProvider.status == GoogleStatus.authenticated) {
+        _handleGoogleSignOut();
+      } else if (_naverAuthProvider.status == NaverStatus.authenticated) {
+        _handleNaverSignOut();
+      } else if (_kakaoAuthProvider.status == KakaoStatus.authenticated) {
+        _handleKakaoSignOut();
+      }
+    }else if (choice.title == 'settings'.i18n()) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (_) => SettingsPage()));
     } else {
       context.read<UiProvider>().changeTheme();
     }
   }
 
-  Future<void> _handleSignOut() async {
-    await _authProvider.handleSignOut();
+  Future<void> _handleGoogleSignOut() async {
+    await _googleAuthProvider.handleSignOut();
     await Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => LoginPage()),
           (_) => false,
     );
   }
 
-  Widget _buildPopupMenu() {
-    return PopupMenuButton<MenuSetting>(
-      onSelected: _onItemMenuPress,
-      itemBuilder: (_) {
-        return _menus.map(
-              (choice) {
-            return PopupMenuItem<MenuSetting>(
-              value: choice,
-              child: Row(
-                children: [
-                  Icon(
-                    choice.icon,
-                    color: ColorConstants.primaryColor,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    choice.title,
-                    style: TextStyle(color: ColorConstants.primaryColor),
-                  ),
-                ],
-              ),
-            );
-          },
-        ).toList();
-      },
+  Future<void> _handleNaverSignOut() async {
+    await _naverAuthProvider.handleSignOut();
+    await Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => LoginPage()),
+          (_) => false,
+    );
+  }
+
+  Future<void> _handleKakaoSignOut() async {
+    await _kakaoAuthProvider.handleSignOut();
+    await Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => LoginPage()),
+          (_) => false,
     );
   }
 
@@ -230,35 +248,7 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            if (_userInfo != null)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: _userInfo!.photoUrl.isNotEmpty
-                          ? NetworkImage(_userInfo!.photoUrl)
-                          : null,
-                      child: _userInfo!.photoUrl.isNotEmpty
-                          ? null
-                          : Icon(
-                        Icons.account_circle,
-                        size: 50,
-                        color: ColorConstants.greyColor,
-                      ),
-                      backgroundColor: ColorConstants.greyColor,
-                      radius: 20,
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      _userInfo!.nickname,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              )
-            else
-              SizedBox(),
+            _buildUserInfoWidget(),
             FutureBuilder<WeatherData>(
               future: futureWeatherData,
               builder: (context, snapshot) {
@@ -296,5 +286,68 @@ class _MainPageState extends State<MainPage> {
         onItemTapped: _onItemTapped,
       ),
     );
+  }
+
+  Widget _buildPopupMenu() {
+    return PopupMenuButton<MenuSetting>(
+      onSelected: _onItemMenuPress,
+      itemBuilder: (_) {
+        return _menus.map(
+              (choice) {
+            return PopupMenuItem<MenuSetting>(
+              value: choice,
+              child: Row(
+                children: [
+                  Icon(
+                    choice.icon,
+                    color: ColorConstants.primaryColor,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    choice.title,
+                    style: TextStyle(color: ColorConstants.primaryColor),
+                  ),
+                ],
+              ),
+            );
+          },
+        ).toList();
+      },
+    );
+  }
+
+  Widget _buildUserInfoWidget() {
+    if (_userInfo != null) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundImage: _userInfo!.photoUrl.isNotEmpty
+                  ? NetworkImage(_userInfo!.photoUrl)
+                  : null,
+              child: _userInfo!.photoUrl.isNotEmpty
+                  ? null
+                  : Icon(
+                Icons.account_circle,
+                size: 50,
+                color: ColorConstants.greyColor,
+              ),
+              backgroundColor: ColorConstants.greyColor,
+              radius: 20,
+            ),
+            SizedBox(width: 10),
+            Text(
+              _userInfo!.nickname,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return SizedBox();
+    }
   }
 }

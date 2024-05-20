@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constant/color_constants.dart';
-import '../../../providers/auth_provider.dart';
-import '../login/login_screen.dart';
+import '../../../providers/google_auth_provider.dart';
+import '../login/login_page.dart';
 import '../main/main_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -23,7 +23,7 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _checkSignedIn() async {
-    final authProvider = context.read<AuthProvider>();
+    final authProvider = context.read<AuthProviderGoogle>();
     bool isLoggedIn = await authProvider.isLoggedIn();
     if (isLoggedIn) {
       Navigator.pushReplacement(

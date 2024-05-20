@@ -13,10 +13,10 @@ import '../../constant/color_constants.dart';
 import '../../constant/firestore_constants.dart';
 import '../../constant/type_message.dart';
 import '../../model/message_chat.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/google_auth_provider.dart';
 import '../../providers/chat_provider.dart';
 import '../../widgets/loading_view.dart';
-import '../login/login_screen.dart';
+import '../login/login_page.dart';
 import 'full_photo_page.dart';
 
 class ChatPage extends StatefulWidget {
@@ -46,7 +46,7 @@ class ChatPageState extends State<ChatPage> {
   final _focusNode = FocusNode();
 
   late final _chatProvider = context.read<ChatProvider>();
-  late final _authProvider = context.read<AuthProvider>();
+  late final _authProvider = context.read<AuthProviderGoogle>();
 
   @override
   void initState() {

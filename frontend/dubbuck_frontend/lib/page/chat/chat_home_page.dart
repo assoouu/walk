@@ -14,13 +14,15 @@ import '../../constant/color_constants.dart';
 import '../../constant/firestore_constants.dart';
 import '../../model/menu_setting.dart';
 import '../../model/user_information.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/google_auth_provider.dart';
 import '../../providers/home_provider.dart';
+import '../../providers/kakao_auth_provider.dart';
+import '../../providers/naver_auth_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../utils/debouncer.dart';
 import '../../utils/utilities.dart';
 import '../../widgets/loading_view.dart';
-import '../login/login_screen.dart';
+import '../login/login_page.dart';
 import '../settings_page.dart';
 import 'chat_page.dart';
 
@@ -41,7 +43,9 @@ class ChatHomePageState extends State<ChatHomePage> {
   String _textSearch = "";
   bool _isLoading = false;
 
-  late final _authProvider = context.read<AuthProvider>();
+  late final _googleAuthProvider = context.read<AuthProviderGoogle>();
+  late final _naverAuthProvider = Provider.of<AuthProviderNaver>( context, listen: false);
+  late final _kakaoAuthProvider = context.read<AuthProviderKakao>();
   late final _homeProvider = context.read<HomeProvider>();
   late final String _currentUserId;
 
@@ -58,17 +62,29 @@ class ChatHomePageState extends State<ChatHomePage> {
   @override
   void initState() {
     super.initState();
-    if (_authProvider.userFirebaseId?.isNotEmpty == true) {
-      _currentUserId = _authProvider.userFirebaseId!;
-    } else {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => LoginPage()),
-        (_) => false,
-      );
-    }
+    _initializeUser();
     _registerNotification();
     _configLocalNotification();
     _listScrollController.addListener(_scrollListener);
+  }
+
+  void _initializeUser() {
+    final googleUserId = _googleAuthProvider.userFirebaseId;
+    final naverUserId = _naverAuthProvider.userFirebaseId;
+    final kakaoUserId = _kakaoAuthProvider.userFirebaseId;
+
+    if (googleUserId?.isNotEmpty == true) {
+      _currentUserId = googleUserId!;
+    } else if (naverUserId?.isNotEmpty == true) {
+      _currentUserId = naverUserId!;
+    } else if (kakaoUserId?.isNotEmpty == true) {
+      _currentUserId = kakaoUserId!;
+    } else {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => LoginPage()),
+            (_) => false,
+      );
+    }
   }
 
   @override
@@ -123,12 +139,43 @@ class ChatHomePageState extends State<ChatHomePage> {
 
   void _onItemMenuPress(MenuSetting choice) {
     if (choice.title == 'log-out'.i18n()) {
-      _handleSignOut();
-    } else if (choice.title == 'settings'.i18n()){
-      Navigator.push( context, MaterialPageRoute(builder: (_) => SettingsPage()));
+      if (_googleAuthProvider.status == GoogleStatus.authenticated) {
+        _handleGoogleSignOut();
+      } else if (_naverAuthProvider.status == NaverStatus.authenticated) {
+        _handleNaverSignOut();
+      } else if (_kakaoAuthProvider.status == KakaoStatus.authenticated) {
+        _handleKakaoSignOut();
+      }
+    } else if (choice.title == 'settings'.i18n()) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (_) => SettingsPage()));
     } else {
       context.read<UiProvider>().changeTheme();
     }
+  }
+
+  Future<void> _handleGoogleSignOut() async {
+    await _googleAuthProvider.handleSignOut();
+    await Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => LoginPage()),
+          (_) => false,
+    );
+  }
+
+  Future<void> _handleNaverSignOut() async {
+    await _naverAuthProvider.handleSignOut();
+    await Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => LoginPage()),
+          (_) => false,
+    );
+  }
+
+  Future<void> _handleKakaoSignOut() async {
+    await _naverAuthProvider.handleSignOut();
+    await Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => LoginPage()),
+          (_) => false,
+    );
   }
 
   void _showNotification(RemoteNotification remoteNotification) async {
@@ -154,13 +201,6 @@ class ChatHomePageState extends State<ChatHomePage> {
       remoteNotification.body,
       platformChannelSpecifics,
       payload: null,
-    );
-  }
-  Future<void> _handleSignOut() async {
-    await _authProvider.handleSignOut();
-    await Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => LoginPage()),
-      (_) => false,
     );
   }
 
