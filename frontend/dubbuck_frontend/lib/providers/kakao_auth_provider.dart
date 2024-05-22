@@ -52,9 +52,6 @@ class AuthProviderKakao extends ChangeNotifier {
         try {
           await UserApi.instance.loginWithKakaoTalk();
           print('카카오톡으로 로그인 성공');
-          _status = KakaoStatus.authenticated;
-          notifyListeners();
-          return true;
         } catch (error) {
           print('카카오톡으로 로그인 실패: $error');
         }
@@ -62,6 +59,8 @@ class AuthProviderKakao extends ChangeNotifier {
 
       // 카카오 계정으로 로그인 시도
       OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
+      print('카카오 계정으로 로그인 성공: ${token.accessToken}');
+
       var provider = OAuthProvider("oidc.dubbuck");
       var credential = provider.credential(
         idToken: token.idToken,
@@ -70,10 +69,13 @@ class AuthProviderKakao extends ChangeNotifier {
 
       final firebaseUser = (await firebaseAuth.signInWithCredential(credential)).user;
       if (firebaseUser == null) {
+        print('Firebase 사용자 정보 가져오기 실패');
         _status = KakaoStatus.authenticateError;
         notifyListeners();
         return false;
       }
+
+      print('Firebase 사용자 정보 가져오기 성공: ${firebaseUser.uid}');
 
       final result = await firebaseFirestore
           .collection(FirestoreConstants.pathUserCollection)
@@ -123,9 +125,7 @@ class AuthProviderKakao extends ChangeNotifier {
 
   Future<void> handleSignOut() async {
     _status = KakaoStatus.uninitialized;
-    notifyListeners();
     await firebaseAuth.signOut();
-    // Kakao logout
     await UserApi.instance.logout();
   }
 }

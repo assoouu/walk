@@ -29,6 +29,6 @@ class WeatherData {
 
 
   String getIconUrl() {
-    return 'https://openweathermap.org/img/wn/$iconCode@2x.png';
+    return 'assets/weather/$iconCode@2x.png';
   }
 }

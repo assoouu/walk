@@ -12,7 +12,7 @@ class LocalizationConfig {
     'it': Locale('it', 'IT'), // 이탈리아어
     'pt': Locale('pt', 'PT'), // 포르투갈어
     'ru': Locale('ru', 'RU'), // 러시아어
-    'ar': Locale('ar', 'AR'), // 아랍어
+    'ar': Locale('ar', 'SA'), // 아랍어 (사우디아라비아)
     'hi': Locale('hi', 'IN'), // 힌디어
     'th': Locale('th', 'TH'), // 태국어
     'vi': Locale('vi', 'VN'), // 베트남어

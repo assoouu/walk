@@ -13,7 +13,6 @@ import '../../providers/naver_auth_provider.dart';
 import '../../widgets/loading_view.dart';
 import '../main/main_page.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -24,52 +23,6 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    final googleAuthProvider = Provider.of<auth.AuthProviderGoogle>(context);
-    final naverAuthProvider = Provider.of<auth.AuthProviderNaver>(context);
-    final kakaoAuthProvider = Provider.of<auth.AuthProviderKakao>(context);
-
-    switch (googleAuthProvider.status) {
-      case GoogleStatus.authenticateError:
-        Fluttertoast.showToast(msg: "Google Sign in fail");
-        break;
-      case GoogleStatus.authenticateCanceled:
-        Fluttertoast.showToast(msg: "Google Sign in canceled");
-        break;
-      case GoogleStatus.authenticated:
-        Fluttertoast.showToast(msg: "Google Sign in success");
-        break;
-      default:
-        break;
-    }
-
-    switch (naverAuthProvider.status) {
-      case NaverStatus.authenticateError:
-        Fluttertoast.showToast(msg: "Naver Sign in fail");
-        break;
-      case NaverStatus.authenticateCanceled:
-        Fluttertoast.showToast(msg: "Naver Sign in canceled");
-        break;
-      case NaverStatus.authenticated:
-        Fluttertoast.showToast(msg: "Naver Sign in success");
-        break;
-      default:
-        break;
-    }
-
-    switch (kakaoAuthProvider.status) {
-      case KakaoStatus.authenticateError:
-        Fluttertoast.showToast(msg: "Kakako Sign in fail");
-        break;
-      case KakaoStatus.authenticateCanceled:
-        Fluttertoast.showToast(msg: "Kakako Sign in canceled");
-        break;
-      case KakaoStatus.authenticated:
-        Fluttertoast.showToast(msg: "Kakako Sign in success");
-        break;
-      default:
-        break;
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -94,132 +47,191 @@ class LoginPageState extends State<LoginPage> {
           ),
           // Loading
           Positioned(
-            child: googleAuthProvider.status == GoogleStatus.authenticating ||
-                naverAuthProvider.status == NaverStatus.authenticating ||
-                kakaoAuthProvider.status == KakaoStatus.authenticating
-                ? LoadingView()
-                : SizedBox.shrink(),
+            child: Consumer3<auth.AuthProviderGoogle, auth.AuthProviderNaver, auth.AuthProviderKakao>(
+              builder: (context, googleAuthProvider, naverAuthProvider, kakaoAuthProvider, child) {
+                return googleAuthProvider.status == GoogleStatus.authenticating ||
+                    naverAuthProvider.status == NaverStatus.authenticating ||
+                    kakaoAuthProvider.status == KakaoStatus.authenticating
+                    ? LoadingView()
+                    : SizedBox.shrink();
+              },
+            ),
           ),
         ],
       ),
     );
   }
-}
 
-Widget getGoogleLoginButton(BuildContext context) {
-  return InkWell(
-    onTap: () async {
-      final authProviderGoogle = Provider.of<auth.AuthProviderGoogle>(context, listen: false);
-      authProviderGoogle.handleSignIn().then((isSuccess) {
-        if (isSuccess) {
-          navigateToMainPage(context);
-        }
-      }).catchError((error, stackTrace) {
-        print(error);
-        print(stackTrace);
-
-        Fluttertoast.showToast(msg: error.toString());
-        authProviderGoogle.handleException();
-      });
-    },
-    child: Card(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      elevation: 2,
-      child: Ink.image(
-        image: const AssetImage('assets/login/google.png'),
-        fit: BoxFit.cover,
-        height: 50,
-        width: double.infinity,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(7),
-            color: Colors.transparent,
+  Widget getGoogleLoginButton(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        final googleAuthProvider = Provider.of<auth.AuthProviderGoogle>(context, listen: false);
+        googleAuthProvider.handleSignIn().then((isSuccess) {
+          if (isSuccess) {
+            navigateToMainPage(context);
+          } else {
+            _showToastMessage(googleAuthProvider.status);
+          }
+        }).catchError((error, stackTrace) {
+          print(error);
+          print(stackTrace);
+          Fluttertoast.showToast(msg: error.toString());
+          googleAuthProvider.handleException();
+        });
+      },
+      child: Card(
+        margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+        elevation: 2,
+        child: Ink.image(
+          image: const AssetImage('assets/login/google.png'),
+          fit: BoxFit.cover,
+          height: 50,
+          width: double.infinity,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7),
+              color: Colors.transparent,
+            ),
+            child: null,
           ),
-          child: null,
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget getNaverLoginButton(BuildContext context) {
-  return InkWell(
-    onTap: () async {
-      final authProviderNaver = Provider.of<auth.AuthProviderNaver>(context, listen: false);
-      try {
-        await authProviderNaver.initUniLinks(context);
-        await authProviderNaver.signInWithNaver(context);
-        navigateToMainPage(context);
-      } catch (error, stackTrace) {
-        print(error);
-        print(stackTrace);
-        Fluttertoast.showToast(msg: error.toString());
-        authProviderNaver.handleException();
+  Widget getNaverLoginButton(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        final naverAuthProvider = Provider.of<auth.AuthProviderNaver>(context, listen: false);
+        try {
+          await naverAuthProvider.initUniLinks();
+          bool isSuccess = await naverAuthProvider.signInWithNaver();
+          if (isSuccess) {
+            navigateToMainPage(context);
+          } else {
+            _showToastMessage(naverAuthProvider.status);
+          }
+        } catch (error, stackTrace) {
+          print(error);
+          print(stackTrace);
+          Fluttertoast.showToast(msg: error.toString());
+          naverAuthProvider.handleException();
+        }
+      },
+      child: Card(
+        margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+        elevation: 2,
+        child: Ink.image(
+          image: const AssetImage('assets/login/naver.png'),
+          fit: BoxFit.cover,
+          height: 50,
+          width: double.infinity,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7),
+              color: Colors.transparent,
+            ),
+            child: null,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget getKakaoLoginButton(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        final kakaoAuthProvider = Provider.of<auth.AuthProviderKakao>(context, listen: false);
+        kakaoAuthProvider.handleSignIn().then((isSuccess) {
+          if (isSuccess) {
+            navigateToMainPage(context);
+          } else {
+            _showToastMessage(kakaoAuthProvider.status);
+          }
+        }).catchError((error, stackTrace) {
+          print(error);
+          print(stackTrace);
+          Fluttertoast.showToast(msg: error.toString());
+          kakaoAuthProvider.handleException();
+        });
+      },
+      child: Card(
+        margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+        elevation: 2,
+        child: Ink.image(
+          image: const AssetImage('assets/login/kakao.png'),
+          fit: BoxFit.cover,
+          height: 50,
+          width: double.infinity,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7),
+              color: Colors.transparent,
+            ),
+            child: null,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showToastMessage(dynamic status) {
+    String message = "";
+    if (status is GoogleStatus) {
+      switch (status) {
+        case GoogleStatus.authenticateError:
+          message = "Google Sign in fail";
+          break;
+        case GoogleStatus.authenticateCanceled:
+          message = "Google Sign in canceled";
+          break;
+        case GoogleStatus.authenticated:
+          message = "Google Sign in success";
+          break;
+        default:
+          break;
       }
-    },
-    child: Card(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      elevation: 2,
-      child: Ink.image(
-        image: const AssetImage('assets/login/naver.png'),
-        fit: BoxFit.cover,
-        height: 50,
-        width: double.infinity,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(7),
-            color: Colors.transparent,
-          ),
-          child: null,
-        ),
-      ),
-    ),
-  );
-}
+    } else if (status is NaverStatus) {
+      switch (status) {
+        case NaverStatus.authenticateError:
+          message = "Naver Sign in fail";
+          break;
+        case NaverStatus.authenticateCanceled:
+          message = "Naver Sign in canceled";
+          break;
+        case NaverStatus.authenticated:
+          message = "Naver Sign in success";
+          break;
+        default:
+          break;
+      }
+    } else if (status is KakaoStatus) {
+      switch (status) {
+        case KakaoStatus.authenticateError:
+          message = "Kakao Sign in fail";
+          break;
+        case KakaoStatus.authenticateCanceled:
+          message = "Kakao Sign in canceled";
+          break;
+        case KakaoStatus.authenticated:
+          message = "Kakao Sign in success";
+          break;
+        default:
+          break;
+      }
+    }
+    Fluttertoast.showToast(msg: message);
+  }
 
-Widget getKakaoLoginButton(BuildContext context) {
-  return InkWell(
-    onTap: () async {
-      final authProviderKakao = Provider.of<auth.AuthProviderKakao>(context, listen: false);
-      authProviderKakao.handleSignIn().then((isSuccess) {
-        if (isSuccess) {
-          navigateToMainPage(context);
-        }
-      }).catchError((error, stackTrace) {
-        print(error);
-        print(stackTrace);
-
-        Fluttertoast.showToast(msg: error.toString());
-        authProviderKakao.handleException();
-      });
-    },
-    child: Card(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      elevation: 2,
-      child: Ink.image(
-        image: const AssetImage('assets/login/kakao.png'),
-        fit: BoxFit.cover,
-        height: 50,
-        width: double.infinity,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(7),
-            color: Colors.transparent,
-          ),
-          child: null,
-        ),
+  void navigateToMainPage(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MainPage(),
       ),
-    ),
-  );
-}
-void navigateToMainPage(BuildContext context) {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => MainPage(),
-    ),
-  );
+    );
+  }
 }

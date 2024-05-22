@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links2/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,30 +38,48 @@ class AuthProviderNaver extends ChangeNotifier {
 
   String? get userFirebaseId => prefs.getString(FirestoreConstants.id);
 
-  Future<void> signInWithNaver(BuildContext context) async {
+  Future<bool> isLoggedIn() async {
+    bool isLoggedIn = firebaseAuth.currentUser != null;
+    if (isLoggedIn && prefs.getString(FirestoreConstants.id)?.isNotEmpty == true) {
+      _status = NaverStatus.authenticated;
+      notifyListeners();
+      return true;
+    } else {
+      _status = NaverStatus.uninitialized;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> signInWithNaver() async {
     try {
+
       String clientId = dotenv.env['CLIENT_ID']!;
       String redirectUri = dotenv.env['REDIRECT_URI']!;
       String state = base64Url.encode(List<int>.generate(16, (_) => Random().nextInt(255)));
       Uri url = Uri.parse('https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=$clientId&redirect_uri=$redirectUri&state=$state');
       await launchUrl(url);
 
-      _status = NaverStatus.authenticated;
+      _status = NaverStatus.authenticating;
+      notifyListeners();
+
+      return true;
     } catch (e) {
       print("Naver Sign-In Error: $e");
       _status = NaverStatus.authenticateError;
       notifyListeners(); // 에러 발생 시 상태를 변경하고 화면 업데이트
+      return false;
     }
   }
 
-  Future<void> initUniLinks(BuildContext context) async {
+  Future<void> initUniLinks() async {
     try {
       final initialLink = await getInitialLink();
-      if (initialLink != null) _handleDeepLink(context, initialLink);
+      if (initialLink != null) _handleDeepLink(initialLink);
 
       linkStream.listen((String? link) {
         if (link != null) {
-          _handleDeepLink(context, link);
+          _handleDeepLink(link);
         }
       }, onError: (err, stacktrace) {
         print("deep link error $err\n$stacktrace");
@@ -74,7 +93,7 @@ class AuthProviderNaver extends ChangeNotifier {
     }
   }
 
-  Future<void> _handleDeepLink(BuildContext context, String link) async {
+  Future<void> _handleDeepLink(String link) async {
     try {
       print("deep link open $link");
       final Uri uri = Uri.parse(link);
@@ -99,7 +118,7 @@ class AuthProviderNaver extends ChangeNotifier {
           final documents = result.docs;
           if (documents.isEmpty) {
             // Writing data to server because here is a new user
-            await firebaseFirestore.collection(FirestoreConstants.pathUserCollection).doc(firebaseUser.uid).set({
+            firebaseFirestore.collection(FirestoreConstants.pathUserCollection).doc(firebaseUser.uid).set({
               FirestoreConstants.nickname: name,
               FirestoreConstants.photoUrl: profileImage,
               FirestoreConstants.id: firebaseUser.uid,
@@ -108,9 +127,10 @@ class AuthProviderNaver extends ChangeNotifier {
             });
 
             // Write data to local storage
-            await prefs.setString(FirestoreConstants.id, firebaseUser.uid);
-            await prefs.setString(FirestoreConstants.nickname, name ?? "");
-            await prefs.setString(FirestoreConstants.photoUrl, profileImage ?? "");
+            User? currentUser = firebaseUser;
+            await prefs.setString(FirestoreConstants.id, currentUser.uid);
+            await prefs.setString(FirestoreConstants.nickname, currentUser.displayName ?? "");
+            await prefs.setString(FirestoreConstants.photoUrl, currentUser.photoURL ?? "");
           } else {
             // Already signed up, just get data from firestore
             final documentSnapshot = documents.first;
@@ -140,5 +160,9 @@ class AuthProviderNaver extends ChangeNotifier {
 
   Future<void> handleSignOut() async {
     _status = NaverStatus.uninitialized;
+    notifyListeners();
+
+    await firebaseAuth.signOut();
+    await FlutterNaverLogin.logOut();
   }
 }

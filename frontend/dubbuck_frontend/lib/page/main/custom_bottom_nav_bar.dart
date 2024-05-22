@@ -3,7 +3,7 @@ import 'package:localization/localization.dart';
 
 import '../community/community_page.dart';
 import '../chat/chat_home_page.dart';
-import '../dubbuck/dubbuck_screen.dart';
+import '../dubbuck/dubbuck_page.dart';
 import '../dubbuckDiary/diary_home_page.dart';
 import '../seongkeum/seongkeum_screen.dart';
 

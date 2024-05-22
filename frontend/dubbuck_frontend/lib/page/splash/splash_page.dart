@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../../../constant/color_constants.dart';
 import '../../../providers/google_auth_provider.dart';
+import '../../../providers/kakao_auth_provider.dart';
+import '../../../providers/naver_auth_provider.dart';
 import '../login/login_page.dart';
 import '../main/main_page.dart';
 
@@ -23,9 +25,15 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _checkSignedIn() async {
-    final authProvider = context.read<AuthProviderGoogle>();
-    bool isLoggedIn = await authProvider.isLoggedIn();
-    if (isLoggedIn) {
+    final authProviderGoogle = context.read<AuthProviderGoogle>();
+    final authProviderNaver = context.read<AuthProviderNaver>();
+    final authProviderKakao = context.read<AuthProviderKakao>();
+
+    bool isGoogleLoggedIn = await authProviderGoogle.isLoggedIn();
+    bool isNaverLoggedIn = await authProviderNaver.isLoggedIn();
+    bool isKakaoLoggedIn = await authProviderKakao.isLoggedIn();
+
+    if (isGoogleLoggedIn || isNaverLoggedIn || isKakaoLoggedIn) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MainPage()),

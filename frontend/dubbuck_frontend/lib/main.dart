@@ -34,6 +34,7 @@ void main() async {
 
   // print(await KakaoSdk.origin); //
   await Firebase.initializeApp();
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
   runApp(MyApp(prefs: prefs));
 }

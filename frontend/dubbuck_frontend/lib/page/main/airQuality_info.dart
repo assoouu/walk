@@ -11,7 +11,7 @@ class AirQualityInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: getAirQualityWidget(airQualityData.aqi),
+      child: Center(child: getAirQualityWidget(airQualityData.aqi)), // Center 위젯 추가
     );
   }
 
@@ -54,10 +54,11 @@ class AirQualityInfo extends StatelessWidget {
     }
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center, // 가운데 정렬
       children: [
         Text(
           'fine-dust'.i18n(),
-            style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold)
+          style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold),
         ),
         const SizedBox(width: 8),
         Image.asset(imagePath, width: 24),

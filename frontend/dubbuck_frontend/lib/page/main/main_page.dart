@@ -118,7 +118,7 @@ class _MainPageState extends State<MainPage> {
 
   void _fetchWeatherData(Position position) async {
     try {
-      var apiKey = dotenv.env['weatherKey'];
+      var apiKey = dotenv.env['WEATHER_API_KEY'];
       var url =
           'https://api.openweathermap.org/data/2.5/weather?lat=${position
           .latitude}&lon=${position
@@ -142,7 +142,7 @@ class _MainPageState extends State<MainPage> {
 
   void _fetchAirQualityData(Position position) async {
     try {
-      var apiKey = dotenv.env['weatherKey'];
+      var apiKey = dotenv.env['WEATHER_API_KEY'];
       var airQualityUrl =
           'http://api.openweathermap.org/data/2.5/air_pollution?lat=${position
           .latitude}&lon=${position.longitude}&appid=$apiKey';
@@ -287,6 +287,7 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+
 
   Widget _buildPopupMenu() {
     return PopupMenuButton<MenuSetting>(
