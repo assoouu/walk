@@ -8,8 +8,8 @@ class Mountain {
   final String details;
   final String management;
   final String phone;
-  final double latitude;
-  final double longitude;
+  final double? latitude;
+  final double? longitude;
 
   Mountain({
     required this.name,
@@ -18,8 +18,8 @@ class Mountain {
     required this.details,
     required this.management,
     required this.phone,
-    required this.latitude,
-    required this.longitude,
+    this.latitude,
+    this.longitude,
   });
 
   factory Mountain.fromXml(xml.XmlElement element) {
@@ -30,8 +30,6 @@ class Mountain {
       details: element.findElements('mntidetails').single.text,
       management: element.findElements('mntiadmin').single.text,
       phone: element.findElements('mntiadminnum').single.text,
-      latitude: double.tryParse(element.findElements('mntilat').single.text) ?? 0.0,
-      longitude: double.tryParse(element.findElements('mntilong').single.text) ?? 0.0,
     );
   }
 
@@ -44,8 +42,8 @@ class Mountain {
       details: data['details'],
       management: data['management'],
       phone: data['phone'],
-      latitude: data['latitude'] != null ? data['latitude'].toDouble() : 0.0,
-      longitude: data['longitude'] != null ? data['longitude'].toDouble() : 0.0,
+      latitude: data['latitude'],
+      longitude: data['longitude'],
     );
   }
 

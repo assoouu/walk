@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../main/custom_bottom_nav_bar.dart';
-import '../../repository/calendar_repository.dart'; // 실제 경로에 따라 수정
-import '../../repository/score_calculator_repository.dart'; // 실제 경로에 따라 수정
+import '../../repository/calendar_repository.dart';
+import '../../repository/score_calculator_repository.dart';
 
 class CalendarPage extends StatefulWidget {
+  final Position currentPosition;
+
+  CalendarPage({required this.currentPosition});
+
   @override
   _CalendarPageState createState() => _CalendarPageState();
 }
@@ -118,6 +123,7 @@ class _CalendarPageState extends State<CalendarPage> {
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
+        currentPosition: widget.currentPosition,
       ),
     );
   }

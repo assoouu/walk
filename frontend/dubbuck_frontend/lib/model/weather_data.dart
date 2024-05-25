@@ -16,7 +16,6 @@ class WeatherData {
   });
 
   factory WeatherData.fromJson(Map<String, dynamic> json) {
-
     return WeatherData(
       condition: json['weather'][0]['main'],
       temperature: (json['main']['temp'] as num).toDouble(),
@@ -26,7 +25,6 @@ class WeatherData {
       iconCode: json['weather'][0]['icon'],
     );
   }
-
 
   String getIconUrl() {
     return 'assets/weather/$iconCode@2x.png';

@@ -160,7 +160,7 @@ class ChatPageState extends State<ChatPage> {
         _listScrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
       }
     } else {
-      Fluttertoast.showToast(msg: '${'nothing-to-send'}.i18n()', backgroundColor: ColorConstants.greyColor);
+      Fluttertoast.showToast(msg: 'nothing-to-send'.i18n(), backgroundColor: ColorConstants.greyColor);
     }
   }
 

@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:localization/localization.dart';
 
 import '../community/community_page.dart';
 import '../chat/chat_home_page.dart';
 import '../dubbuck/dubbuck_page.dart';
 import '../dubbuckDiary/diary_home_page.dart';
-import '../seongkeum/seongkeum_screen.dart';
+import '../seongkeum/seongkeum_page.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
   final void Function(int) onItemTapped;
+  final Position? currentPosition;
 
   const CustomBottomNavBar({
     Key? key,
     required this.selectedIndex,
     required this.onItemTapped,
+    required this.currentPosition,
   }) : super(key: key);
 
   Widget _navBarItem(IconData icon, String label, int index, BuildContext context) {
@@ -25,10 +28,19 @@ class CustomBottomNavBar extends StatelessWidget {
             Navigator.push(context, MaterialPageRoute(builder: (context) => DubbuckPage()));
             break;
           case 1:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => SeongkeumPage()));
+            if (currentPosition != null) {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => SeongkeumPage(
+                  latitude: currentPosition!.latitude,
+                  longitude: currentPosition!.longitude,
+                ),
+              ));
+            }
             break;
           case 2:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => DiraryHomePage()));
+            if (currentPosition != null) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => DiaryHomePage(currentPosition: currentPosition!)));
+            }
             break;
           case 3:
             Navigator.push(context, MaterialPageRoute(builder: (context) => ChatHomePage()));

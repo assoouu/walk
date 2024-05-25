@@ -44,7 +44,7 @@ class ChatHomePageState extends State<ChatHomePage> {
   bool _isLoading = false;
 
   late final _googleAuthProvider = context.read<AuthProviderGoogle>();
-  late final _naverAuthProvider = Provider.of<AuthProviderNaver>( context, listen: false);
+  late final _naverAuthProvider = Provider.of<AuthProviderNaver>(context, listen: false);
   late final _kakaoAuthProvider = context.read<AuthProviderKakao>();
   late final _homeProvider = context.read<HomeProvider>();
   late final String _currentUserId;
@@ -171,7 +171,7 @@ class ChatHomePageState extends State<ChatHomePage> {
   }
 
   Future<void> _handleKakaoSignOut() async {
-    await _naverAuthProvider.handleSignOut();
+    await _kakaoAuthProvider.handleSignOut();
     await Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => LoginPage()),
           (_) => false,
@@ -277,7 +277,7 @@ class ChatHomePageState extends State<ChatHomePage> {
               controller: _searchBarController,
               onChanged: (value) {
                 _searchDebouncer.run(
-                  () {
+                      () {
                     if (value.isNotEmpty) {
                       _btnClearController.add(true);
                       setState(() {
@@ -304,14 +304,14 @@ class ChatHomePageState extends State<ChatHomePage> {
             builder: (_, snapshot) {
               return snapshot.data == true
                   ? GestureDetector(
-                      onTap: () {
-                        _searchBarController.clear();
-                        _btnClearController.add(false);
-                        setState(() {
-                          _textSearch = "";
-                        });
-                      },
-                      child: Icon(Icons.clear_rounded, color: ColorConstants.greyColor, size: 20))
+                  onTap: () {
+                    _searchBarController.clear();
+                    _btnClearController.add(false);
+                    setState(() {
+                      _textSearch = "";
+                    });
+                  },
+                  child: Icon(Icons.clear_rounded, color: ColorConstants.greyColor, size: 20))
                   : SizedBox.shrink();
             },
           ),
@@ -331,7 +331,7 @@ class ChatHomePageState extends State<ChatHomePage> {
       onSelected: _onItemMenuPress,
       itemBuilder: (_) {
         return _menus.map(
-          (choice) {
+              (choice) {
             return PopupMenuItem<MenuSetting>(
                 value: choice,
                 child: Row(
@@ -368,38 +368,38 @@ class ChatHomePageState extends State<ChatHomePage> {
                 ClipOval(
                   child: userChat.photoUrl.isNotEmpty
                       ? Image.network(
-                          userChat.photoUrl,
-                          fit: BoxFit.cover,
-                          width: 50,
-                          height: 50,
-                          loadingBuilder: (_, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              width: 50,
-                              height: 50,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: ColorConstants.themeColor,
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, object, stackTrace) {
-                            return Icon(
-                              Icons.account_circle,
-                              size: 50,
-                              color: ColorConstants.greyColor,
-                            );
-                          },
-                        )
-                      : Icon(
-                          Icons.account_circle,
-                          size: 50,
-                          color: ColorConstants.greyColor,
+                    userChat.photoUrl,
+                    fit: BoxFit.cover,
+                    width: 50,
+                    height: 50,
+                    loadingBuilder: (_, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        width: 50,
+                        height: 50,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: ColorConstants.themeColor,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
                         ),
+                      );
+                    },
+                    errorBuilder: (context, object, stackTrace) {
+                      return Icon(
+                        Icons.account_circle,
+                        size: 50,
+                        color: ColorConstants.greyColor,
+                      );
+                    },
+                  )
+                      : Icon(
+                    Icons.account_circle,
+                    size: 50,
+                    color: ColorConstants.greyColor,
+                  ),
                 ),
                 Flexible(
                   child: Container(

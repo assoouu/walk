@@ -66,7 +66,7 @@ class WeatherInfo extends StatelessWidget {
                 '${'wind-speed'.i18n()} ${weatherData.windSpeed}m/s',
                 style: TextStyle(color: Colors.blueGrey),
               ),
-              SizedBox(width: 16),
+              SizedBox(width: 8),
               Image.asset(
                 _getHumidityImage(weatherData.humidity),
                 width: 24,

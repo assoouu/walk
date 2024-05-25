@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:localization/localization.dart';
+import 'package:geolocator/geolocator.dart';
 import 'calendar_page.dart';
 import 'log_page.dart';
 
-class DiraryHomePage extends StatefulWidget {
+class DiaryHomePage extends StatefulWidget {
+  final Position currentPosition;
+
+  DiaryHomePage({required this.currentPosition});
+
   @override
-  _DiraryHomePageState createState() => _DiraryHomePageState();
+  _DiaryHomePageState createState() => _DiaryHomePageState();
 }
 
-class _DiraryHomePageState extends State<DiraryHomePage> with SingleTickerProviderStateMixin {
+class _DiaryHomePageState extends State<DiaryHomePage> with SingleTickerProviderStateMixin {
   TabController? _tabController;
 
   @override
@@ -40,8 +45,8 @@ class _DiraryHomePageState extends State<DiraryHomePage> with SingleTickerProvid
       body: TabBarView(
         controller: _tabController,
         children: [
-          LogPage(imageUrls: [], initialPage: 0), // '기록' 탭에는 LogPage를 표시하고 imageUrls를 빈 배열로 전달합니다.
-          CalendarPage(),
+          LogPage(imageUrls: [], initialPage: 0),
+          CalendarPage(currentPosition: widget.currentPosition),
         ],
       ),
     );

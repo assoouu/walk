@@ -1,53 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'package:xml/xml.dart' as xml;
-
 import '../../model/mountain_information.dart';
-import '../../model/mountain_location.dart';
+import '../../service/mountain_trail_service.dart';
+import '../../model/mountain_route_model.dart';
 
-class MountainRoutePage extends StatefulWidget {
+class MountainTrailPage extends StatefulWidget {
   final Mountain mountain;
 
-  MountainRoutePage({required this.mountain});
+  MountainTrailPage({required this.mountain});
 
   @override
-  _MountainRoutePageState createState() => _MountainRoutePageState();
+  _MountainTrailPageState createState() => _MountainTrailPageState();
 }
 
-class _MountainRoutePageState extends State<MountainRoutePage> {
+class _MountainTrailPageState extends State<MountainTrailPage> {
   GoogleMapController? _mapController;
-  MountainLocation? _mountainLocation;
+  List<LatLng> _polylineCoordinates = [];
   String _errorMessage = '';
+  List<MountainRoute> _routes = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchMountainLocation();
+    _fetchTrailInfo();
   }
 
-  Future<void> _fetchMountainLocation() async {
-    final String apiKey = dotenv.env['FOREST_API_KEY']!;
-    final url = 'http://apis.data.go.kr/B553662/fmmtnFrtrlPoiInfoService/getFmmtnFrtrlPoiInfoList?serviceKey=$apiKey&pageNo=1&numOfRows=1&type=xml&srchFrtrlNm=${widget.mountain.name}';
-
+  Future<void> _fetchTrailInfo() async {
+    final trailService = MountainTrailService();
     try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final document = xml.XmlDocument.parse(response.body);
-        final item = document.findAllElements('item').first;
-        setState(() {
-          _mountainLocation = MountainLocation.fromXml(item);
-        });
-      } else {
-        setState(() {
-          _errorMessage = 'Failed to load mountain location';
-        });
-      }
+      final routes = await trailService.fetchTrailInfo(
+        mountainName: widget.mountain.name,
+        geomFilter: 'LINESTRING(13133057.313802 4496529.073264,14133023.872602 4496514.7413212)',
+        attrFilter: 'sec_len:BETWEEN:100,200',
+      );
+      setState(() {
+        _routes = routes;
+        _polylineCoordinates = routes.expand((route) =>
+            route.coordinates.map((coord) => LatLng(coord.latitude, coord.longitude))
+        ).toList();
+      });
     } catch (e) {
       setState(() {
         _errorMessage = 'Error: $e';
       });
+    }
+  }
+
+  Color _getDifficultyColor(String difficulty) {
+    switch (difficulty) {
+      case '상':
+        return Colors.red;
+      case '중':
+        return Colors.orange;
+      case '하':
+      default:
+        return Colors.green;
     }
   }
 
@@ -59,25 +66,42 @@ class _MountainRoutePageState extends State<MountainRoutePage> {
       ),
       body: _errorMessage.isNotEmpty
           ? Center(child: Text(_errorMessage))
-          : _mountainLocation == null
-          ? Center(child: CircularProgressIndicator())
-          : GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: LatLng(_mountainLocation!.latitude, _mountainLocation!.longitude),
-          zoom: 14,
-        ),
-        markers: {
-          Marker(
-            markerId: MarkerId('mountain'),
-            position: LatLng(_mountainLocation!.latitude, _mountainLocation!.longitude),
-            infoWindow: InfoWindow(title: widget.mountain.name),
+          : Column(
+        children: [
+          Expanded(
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(widget.mountain.latitude ?? 0.0, widget.mountain.longitude ?? 0.0),
+                zoom: 14,
+              ),
+              polylines: _routes.map((route) => Polyline(
+                polylineId: PolylineId(route.name),
+                color: _getDifficultyColor(route.difficulty),
+                width: 5,
+                points: route.coordinates.map((coord) => LatLng(coord.latitude, coord.longitude)).toList(),
+              )).toSet(),
+              onMapCreated: (controller) {
+                setState(() {
+                  _mapController = controller;
+                });
+              },
+            ),
           ),
-        },
-        onMapCreated: (controller) {
-          setState(() {
-            _mapController = controller;
-          });
-        },
+          if (_routes.isNotEmpty)
+            Expanded(
+              child: ListView.builder(
+                itemCount: _routes.length,
+                itemBuilder: (context, index) {
+                  final route = _routes[index];
+                  return ListTile(
+                    title: Text(route.name),
+                    subtitle: Text(
+                        '길이: ${route.sectionLength}m, 상행: ${route.upTime}분, 하행: ${route.downTime}분, 난이도: ${route.difficulty}'),
+                  );
+                },
+              ),
+            ),
+        ],
       ),
     );
   }
