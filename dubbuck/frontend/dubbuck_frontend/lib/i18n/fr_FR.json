@@ -1,0 +1,51 @@
+{
+  "settings": "Paramètres",
+  "log-out": "Déconnexion",
+  "dark-theme": "Thème sombre",
+
+  "no-information": "Pas d'informations",
+  "very-good": "Très bien",
+  "good": "Bien",
+  "moderate": "Modéré",
+  "bad": "Mauvais",
+  "very-bad": "Très mauvais",
+
+  "feels-like": "Ressenti",
+  "wind-speed": "Vitesse du Vent",
+  "humidity": "Humidité",
+  "fine-dust": "Fines Particules",
+
+  "stroll": "Promenade",
+  "stride": "Foulée",
+  "record": "Enregistrer",
+  "chat": "Discussion",
+  "community": "Communauté",
+  "photos": "Photos",
+  "ranking": "Classement",
+  "diary": "Journal",
+  "calendar": "Calendrier",
+
+  "daily-distance": "Distance Quotidienne",
+  "total-time": "Temps Total",
+  "total-distance": "Distance Totale",
+
+  "nickname": "Pseudo",
+  "about-me": "À propos de moi",
+  "fun-like-travel-play-game": "Amusant, aime voyager et jouer au jeu...",
+  "sweetie": "Chéri(e)",
+  "update": "Mise à jour",
+
+  "failed-to-fetch-user-information": "Impossible de récupérer les informations de l'utilisateur",
+  "location-service-disabled": "Service de localisation désactivé",
+  "location-permission-denied": "Autorisation de localisation refusée",
+  "location-permission-denied-forever": "Autorisation de localisation refusée définitivement",
+  "failed-to-fetch-weather-data": "Échec de récupération des données météorologiques",
+  "failed-to-fetch-air-quality-data": "Échec de récupération des données sur la qualité de l'air",
+
+  "no-users": "Pas d'utilisateurs",
+  "search-by-nickname": "Recherche par pseudo (saisissez exactement en respectant la casse)",
+
+  "nothing-to-send": "Rien à envoyer",
+  "type-your-message": "Tapez votre message...",
+  "no-message-here-yet": "Pas de message ici pour le moment..."
+}
