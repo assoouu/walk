@@ -1,0 +1,51 @@
+{
+  "settings": "設置",
+  "log-out": "登出",
+  "dark-theme": "深色主題",
+
+  "no-information": "沒有資訊",
+  "very-good": "非常好",
+  "good": "好",
+  "moderate": "適中",
+  "bad": "差",
+  "very-bad": "非常差",
+
+  "feels-like": "體感溫度",
+  "wind-speed": "風速",
+  "humidity": "濕度",
+  "fine-dust": "細微塵埃",
+
+  "stroll": "漫步",
+  "stride": "大步走",
+  "record": "記錄",
+  "chat": "聊天",
+  "community": "社區",
+  "photos": "照片",
+  "ranking": "排名",
+  "diary": "日記",
+  "calendar": "日曆",
+
+  "daily-distance": "每日距離",
+  "total-time": "總時間",
+  "total-distance": "總距離",
+
+  "nickname": "暱稱",
+  "about-me": "關於我",
+  "fun-like-travel-play-game": "喜歡旅行和玩遊戲...",
+  "sweetie": "甜心",
+  "update": "更新",
+
+  "failed-to-fetch-user-information": "無法獲取用戶信息",
+  "location-service-disabled": "位置服務已禁用",
+  "location-permission-denied": "位置權限被拒絕",
+  "location-permission-denied-forever": "位置權限永久拒絕",
+  "failed-to-fetch-weather-data": "無法獲取天氣數據",
+  "failed-to-fetch-air-quality-data": "無法獲取空氣質量數據",
+
+  "no-users": "沒有用戶",
+  "search-by-nickname": "按暱稱搜索（輸入大小寫敏感）",
+
+  "nothing-to-send": "沒有可發送的內容",
+  "type-your-message": "輸入您的消息...",
+  "no-message-here-yet": "這裡還沒有消息..."
+}

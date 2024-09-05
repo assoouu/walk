@@ -1,0 +1,51 @@
+
+{
+  "settings": "Cài đặt",
+  "log-out": "Đăng xuất",
+  "dark-theme": "Chủ đề tối",
+  "no-information": "Không có thông tin",
+  "very-good": "Rất tốt",
+  "good": "Tốt",
+  "moderate": "Trung bình",
+  "bad": "Xấu",
+  "very-bad": "Rất xấu",
+
+  "feels-like": "Cảm giác như",
+  "wind-speed": "Tốc độ gió",
+  "humidity": "Độ ẩm",
+  "fine-dust": "Bụi mịn",
+
+  "stroll": "Dạo chơi",
+  "stride": "Bước đi",
+  "record": "Ghi chép",
+  "chat": "Trò chuyện",
+  "community": "Cộng đồng",
+  "photos": "Ảnh",
+  "ranking": "Xếp hạng",
+  "diary": "Nhật ký",
+  "calendar": "Lịch",
+
+  "daily-distance": "Khoảng cách hàng ngày",
+  "total-time": "Tổng thời gian",
+  "total-distance": "Tổng khoảng cách",
+
+  "nickname": "Bí danh",
+  "about-me": "Về tôi",
+  "fun-like-travel-play-game": "Vui vẻ, thích du lịch và chơi game...",
+  "sweetie": "Dễ thương",
+  "update": "Cập nhật",
+
+  "failed-to-fetch-user-information": "Không thể lấy thông tin người dùng",
+  "location-service-disabled": "Dịch vụ định vị bị tắt",
+  "location-permission-denied": "Từ chối quyền định vị",
+  "location-permission-denied-forever": "Từ chối quyền định vị vĩnh viễn",
+  "failed-to-fetch-weather-data": "Không thể lấy dữ liệu thời tiết",
+  "failed-to-fetch-air-quality-data": "Không thể lấy dữ liệu chất lượng không khí",
+
+  "no-users": "Không có người dùng",
+  "search-by-nickname": "Tìm kiếm theo bí danh (nhập đúng và không phân biệt chữ hoa chữ thường)",
+
+  "nothing-to-send": "Không có gì để gửi",
+  "type-your-message": "Nhập tin nhắn của bạn...",
+  "no-message-here-yet": "Chưa có tin nhắn ở đây..."
+}
